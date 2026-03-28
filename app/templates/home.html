@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %} Welcome to Vehicle Parking App {% endblock %}
+
+{% block content %}
+<div class="hero-section text-center" >
+  <h1 class="mb-3"> Welcome to Vehicle Parking App</h1>
+  <p class="mb-4"> Your one-stop solution for smart and seamless parking.</p>
+  <br><br>
+  {% if session.admin_logged_in %}
+    <div class="alert alert-info">You are logged in as<strong>Admin</strong>.</div>
+    <a href="{{url_for('main.admin_dashboard')}}" class="btn btn-primary me-2">
+      <i class="fas fa-tools"></i>Admin Dashboard
+    </a>
+    <a href="{{url_for('main.admin_logout')}}" class="btn btn-outline-danger">
+      <i class="fas fa-sign-out-alt"></i>Logout
+    </a>
+  {% elif current_user.is_authenticated %}
+    <div class="alert alert-success">Welcome, <strong>{{current_user.full_name}}</strong>!</div>
+    <a href="{{url_for('main.user_dashboard')}}" class="btn btn-success me-2">
+      <i class="fas fa-tachometer-alt"></i>User Dashboard
+    </a>
+    <a href="{{url_for('main.logout')}}" class="btn btn-outline-danger">
+      <i class="fas fa-sign-out-alt"></i>Logout
+    </a>
+  {% else %}
+    <div class="d-flex justify-content-center gap-3 flex-wrap">
+      <a href="{{url_for('main.login')}}" class="btn btn-outline-primary">
+        <i class="fas fa-sign-in-alt"></i>User Login
+      </a>
+      <a href="{{url_for('main.register')}}" class="btn btn-outline-secondary">
+        <i class="fas fa-user-plus"></i>Register
+      </a>
+      <a href="{{url_for('main.admin_login')}}" class="btn btn-dark">
+        <i class="fas fa-user-shield"></i>Admin Login
+      </a>
+    </div>
+  {% endif %}
+  <br><br>
+  
+  <!--Welcome Bot-->
+  <div class="d-flex justify-content-center">
+    <video autoplay loop muted playsinline disablePictureInPicture controlslist="nodownload nofullscreen noremoteplayback" style="max-height: 250px; max-width: 100%:">
+      <source src="{{url_for('static', filename='Animation - 1751736650488.webm')}}" type="video/webm">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
+  <!--Adding Hi Voice to the Welcome Bot-->
+  <audio autoplay>
+    <source src="{{url_for('static', filename='hello-87032.mp3')}}" type="audio/mpeg">
+    Your browser does not support the audio tag.
+  </audio>
+</div>
+{% endblock %}

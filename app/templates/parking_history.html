@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %} Parking History {% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="text-center mb-4">
+        <h2><i class="fas fa-history"></i>{{user.full_name}}'s Parking History</h2>
+    </div>
+
+    {% if history %}
+        <div class="table-responsive"></div>    
+            <table class="table table-bordered table-striped table-hover align-middle text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Lot Name</th>
+                        <th>Location</th>
+                        <th>Spot ID</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Duration(hrs)</th>
+                        <th>Cost (₹)</th>
+                        <th>Vehicle Number</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for res in history %}
+                        <tr>
+                            <td>{{res.spot.lot.name}}</td>
+                            <td>{{res.spot.lot.location_name}}</td>
+                            <td>{{res.spot.id}}</td>
+                            <td>{{res.start_time.strftime('%d-%m-%Y | %H:%M:%S')}}</td>
+                            <td>{{res.end_time.strftime('%d-%m-%Y | %H:%M:%S')}}</td>
+                            <td>{{ ((res.end_time - res.start_time).total_seconds() / 3600) | round(2) }}</td>
+                            <td>{{res.cost}}</td>
+                            <td>{{res.vehicle_number}}</td>
+                        </tr>
+                    {% endfor %} 
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-warning text-center" role="start">
+            <i class="fas fa-info-circle"></i>No Parking History Found.
+    {% endif %}
+    <div class="mt-4 text-center">
+        <a href="{{url_for('main.user_dashboard')}}" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-left"></i>Back to Dashboard
+        </a>
+    </div>        
+</div>
+{% endblock %}

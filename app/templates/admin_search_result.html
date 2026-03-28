@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+<div class="conatiner-mt-4">
+    <h2>Search Results for "<strong>{{query}}</strong>"</h2>
+
+    {% if lots %}
+        <h3 class="mt-4"><i class="fas fa-square-parking me-2"></i>Matching Parking Lots:</h3>
+        <div class="row">
+            {% for lot in lots %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h4 class="card-title">{{lot.name}}<small class="text-muted">{{lot.location_name}}</small></h4>
+                            <p class="card-text">
+                                <strong>Address:</strong> {{lot.address}}<br>
+                                <strong>Pincode:</strong> {{lot.pincode}}<br>
+                                <strong>Rate:</strong> ₹{{lot.price_per_hour}} /hr<br>
+                                <strong>Available:</strong> <span class="text-success">{{lot.available}}</span> |
+                                <strong>Occupied:</strong> <span class="text-danger">{{lot.occupied}}</span>
+                            </p>
+                            <a href="{{url_for('main.view_spots', lot_id=lot.id)}}" class="btn btn-outline-info btn-sm">
+                                <i class="fas fa-th-list"></i> View Spots
+                            </a>
+                            <a href="{{url_for('main.edit_lot', lot_id=lot.id)}}" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if reservations %}
+        <h2 class="mt-5">
+            <i class="fas fa-book"></i> Matching Reservations
+        </h2>
+        <table class="table table-bordered mt-3">
+            <thead class="table-light">
+                <tr>
+                    <th>Reservation ID</th>
+                    <th>User</th>
+                    <th>Spot ID</th>
+                    <th>Lot Name</th>
+                    <th>Vehicle Number</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Cost (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for res in reservations %}
+                    <tr>
+                        <td>{{ res.id }}</td>
+                        <td>{{ res.user.full_name }} (ID: {{ res.user.id }})</td>
+                        <td>{{ res.spot_id }}</td>
+                        <td>{{ res.spot.lot.name }}</td>
+                        <td>{{ res.vehicle_number }}</td>
+                        <td>{{ res.start_time.strftime('%d-%m-%Y  %H:%M') }}</td>
+                        <td>
+                            {% if res.end_time %}
+                                {{ res.end_time.strftime("%d-%m-%Y  %H:%M") }}
+                            {% else %}
+                                <span class="badge bg-warning text-dark"><em>Ongoing</em></span>
+                            {% endif %}
+                        </td>
+                        <td>{{ res.cost }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    {% if not lots and not reservations %}
+        <div class="alert alert-warning mt-4">No results found for your query.</div>
+    {% endif %}
+    <div class="mb-3">
+        <a href="{{url_for('main.admin_dashboard')}}" class="btn btn-outline-dark mt-4">
+            <i class="fas fa-arrow-left"></i>Back to Dashboard
+        </a> 
+    </div>
+</div>
+{% endblock %}

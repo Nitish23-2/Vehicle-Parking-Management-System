@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Spot History{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-3"><i class="fas fa-history"></i>Spot {{spot.id}} - {{lot.name}} ({{lot.location_name}})</h2>
+    {% if history %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>User</th>
+                        <th>Start time</th>
+                        <th>End Time</th>
+                        <th>Vehicle Number</th>
+                        <th>Cost (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for res in history %}
+                        <tr>
+                            <td>{{res.user.full_name}}</td>
+                            <td>{{res.start_time.strftime('%d-%m-%Y | %H:%M')}}</td>
+                            <td>
+                                {% if res.end_time %}
+                                    {{res.end_time.strftime('%d-%m-%Y | %H:%M')}}
+                                {% else %}
+                                    <span class="badge bg-warning text-dark"><em>Ongoing</em></span>
+                                {% endif %} 
+                            </td>
+                            <td>{{res.vehicle_number}}</td>
+                            <td>{{res.cost}}</td>
+                        </tr>
+                    {% endfor %}    
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info"><em>No Reservation History For This Spot Yet.</em></div>
+    {% endif %}
+        
+    <a href="{{url_for('main.view_spots', lot_id=lot.id)}}" class="btn btn-outline-secondary mt-3">
+        <i class="fas fa-arrow-left"></i>Back to Spot List
+    </a>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Spots in {{lot.name}}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="text-center mb-4">
+        <h2>{{lot.name}} <small class="text-muted">({{lot.location_name}})</small></h2>
+        <p>Total Spots: <strong>{{lot.max_spots}}</strong></p>
+    </div>
+    <div class="row">
+        {% for spot in spots %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card body">
+                    <h3 class="card-title">
+                        <i class="fas fa-square-parking me-2"></i>Spot ID: {{spot.id}}
+                    </h3>
+                    <p class="card-text">
+                        Status:    
+                        {% if spot.status == "A" %}
+                            <span class="badge bg-success">Available</span>
+                        {% else %}
+                            <span class="badge bg-danger">Occupied</span> 
+                        {% endif %}
+                    </p>
+                    <a href="{{url_for('main.spot_history', spot_id=spot.id)}}" class="btn btn-outline-info">
+                        <i class="fas fa-history"></i>View History
+                    </a>
+                    <form action="{{url_for('main.delete_spot', spot_id=spot.id)}}" method="POST" class="d-inline-block" onsubmit="return confirm('Are You Sure You Want To Delete This Spot?');">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                            <i class="fas fa-trash-alt"></i>Delete Spot
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}    
+    </div>
+
+    <div class="mt-4">
+        <a href="{{url_for('main.admin_dashboard')}}" class="btn btn-outline-secondary me-2">
+            <i class="fas fa-arrow-left"></i>Back to Dashboard
+        </a>
+        <a href="{{url_for('main.home')}}" class="btn btn-dark">
+            <i class="fas fa-home"></i>Home page
+        </a>
+    </div>
+</div>
+{% endblock %}

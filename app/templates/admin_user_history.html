@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}{{user.full_name}}'s History{% endblock %}
+
+{% block content %}
+<div class="container-mt-4">
+    <h2 class="text-center mb-3">
+        <i class="fas fa-user-clock"></i>{{user.full_name}}'s Parking History
+    </h2>
+    <p class="text center text-muted">Email: {{user.email}}</p>
+
+    {% if history %}
+        <div class="table-responsive mt-4">
+            <table class="table table-bordered table-striped align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Spot ID</th>
+                        <th>Lot Name</th>
+                        <th>Vehicle Number</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Cost (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for res in history %}
+                        <tr>
+                            <td>{{res.spot.id}}</td>
+                            <td>{{res.spot.lot.name}}</td>
+                            <td>{{res.vehicle_number}}</td>
+                            <td>{{res.start_time.strftime('%d-%m-%Y | %H:%M')}}</td>
+                            <td>
+                                {% if res.end_time %}
+                                    {{res.end_time.strftime('%d-%m-%Y | %H:%M')}}
+                                {% else %}
+                                    <span class="text-warning"><em>Ongoing</em></span>
+                                {% endif %} 
+                            </td>
+                            <td><strong>{{res.cost}}</strong></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center mt-4">
+            No Parking History Available For This User.
+        </div>    
+    {% endif %}
+    
+    <div class="text-center mt-4">
+        <a href="{{url_for('main.view_all_users')}}">
+            <i class="fas fa-arrow-left"></i>Back to All Users
+        </a>
+    </div>
+</div>
+{% endblock %}

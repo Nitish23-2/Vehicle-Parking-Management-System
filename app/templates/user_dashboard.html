@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}User Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="text-center mb-4">
+        <h2>Welcome, {{user.full_name}}</h2>
+        <p class="text-muted">This is your Dashboard.</p>
+    </div>
+
+    {% if not reserved_only %}
+        <form method="GET" action="{{ url_for('main.user_dashboard') }}" class="mb-4">
+            <label for="lot" class="form-label">Select Parking Lot:</label>
+            <select name="lot_id" class="form-select w-auto d-inline-block" onchange="this.form.submit()">
+                <option value="">-- Select Lot --</option>
+                {% for lot in lots %}
+                    <option value="{{ lot.id }}" {% if selected_lot and lot.id == selected_lot.id %}selected{% endif %}>
+                         {{ lot.name }} ({{ lot.location_name }})
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
+    {% endif %}
+        
+    {% if selected_lot %}
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">{{ selected_lot.name }} ({{ selected_lot.location_name }})</h3>
+            </div>
+            <div class="card-body">
+                <p><strong>Address:</strong> {{ selected_lot.address }}, {{ selected_lot.pincode }}</p>
+                <p><strong>Rate:</strong> ₹{{ selected_lot.price_per_hour }}/hour</p>
+                
+                {% if not reserved_only %}
+                    <form action="{{ url_for('main.auto_reserve') }}" method="POST" class="row g-2 mb-4">
+                        <input type="hidden" name="lot_id" value="{{ selected_lot.id }}">
+                        <div class="col-md-8">
+                            <input type="text" name="vehicle_number" placeholder="Enter Vehicle number" class="form-control" required >
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="fas fa-magic"></i>Auto-Reserve Spot
+                            </button>
+                        </div>
+                    </form>
+                {% endif %}
+
+                <h4>Available Spots:</h4>
+                <ul class="list-group">
+                    {% for spot in selected_lot.spots %}
+                        {% set reservation = spot_status[spot.id] %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Spot ID:</strong> {{ spot.id }}
+                            </div>
+
+                            {% if reservation is none %}
+                                <form action="{{ url_for('main.reserve_spot', spot_id=spot.id) }}" method="POST" class="d-flex">
+                                    <input type="text" name="vehicle_number" class="form-control me-2" placeholder="Enter Vehicle number" required>
+                                    <button type="submit" class="btn btn-primary">Reserve</button>
+                                </form>
+                            {% elif reservation.user_id == user.id %}
+                                <form action="{{ url_for('main.release_spot', spot_id=spot.id) }}" method="POST" >
+                                    <button type="submit" class="btn btn-warning">Release</button>
+                                </form>
+                            {% else %}
+                                <span class="badge bg-danger">Occupied</span>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endif %}
+    <br><br>
+    <div class="d-flex justify justify-content-between mt-4">
+        <a href="{{url_for('main.parking_history')}}" class="btn btn-outline-info">
+            <i class="fas fa-history"></i>View Parking History
+        </a>
+        <br>
+        <a href="{{url_for('main.logout')}}" class="btn btn-outline-danger">
+            <i class="fas fa-sign-out-alt"></i>Logout
+        </a>
+        <br>
+
+    </div>
+</div>
+{% endblock %}

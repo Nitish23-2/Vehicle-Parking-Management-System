@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}All Users{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4 text-center"><i class="fas fa-users"></i>All Registered Users</h2>
+
+    {% if users %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>History</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{user.name}}</td>
+                            <td>{{user.email}}</td>
+                            <td>
+                                <a href="{{url_for('main.admin_user_history', user_id=user.id)}}" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-clock-rotate-left"></i>View History
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-warning text-center">No users Found.</div>
+    {% endif %}
+    <div class="mt-4 text-center">
+        <a href="{{url_for('main.admin_dashboard')}}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Admin Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
